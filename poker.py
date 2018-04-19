@@ -7,7 +7,9 @@ import card
 import code
 
 def read_holdem_hand(hole_cards, board_cards):
-    '''read holdem hand. 21 combination of 5 cards'''
+    '''read holdem hand. 21 combination of 5 cards. current implementation is an exhaustive approach; 
+       checks every possible combination of 5 card hands and evaluates the hand, keeping track of the
+       largest hand found. returns the "code" of the best possible hand'''
     cards = []
     
     board_card_1 = [0,0,0,0,0,0,1,1,1,2]
@@ -239,8 +241,8 @@ def sort_cards(unsorted):
             
 def read_hand(cards, lower_limit = 0):
     '''read a poker hand. will search for hands >= to lower limit. will not search for hands lower
-       than lower limit parameter. searching is ended prematurely due to the lower limit parameter, 
-       a list containing -1 will be returned'''
+       than lower limit parameter. if searching is ended prematurely due to the lower limit parameter, 
+       a list containing -1 will be returned. the "cards" parameter expects a list of exactly 5 card instances'''
         
     cards = sort_cards(cards) #sort cards first, descending order based on rank
     
