@@ -1,0 +1,12 @@
+Readme file
+
+extra documentation for the 'code' list used in poker.py:
+code is a list of integers used to compare poker hands. The left-most
+(first) elements in the list are the most significant. The first item in
+the list is the hand ranking (flush, trips, etc). The next integer in the 
+list will be the next most significant ranking (for example, for a flush,
+'code' could be [6,12,11,9,7,4]. 6 means flush. 12 would be queen, 11 would
+be jack, 9 would be 9, etc) 
+
+Using the code system this way allows for effective and efficient exhaustive 
+comparison of hands
