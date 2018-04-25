@@ -31,27 +31,31 @@ def deal_cards(deck, cards, who):
 def get_ranks(board):
     '''Returns the rank of the cards as an array'''
     boardRanks = []
-    for k in range(0, 5):
+    for k in range(0, len(board)):
         boardRanks.append(board[k].return_rank())
     return boardRanks
 
 
-def get_suits(board,len = 5):
+def get_suits(board):
     '''Returns the suit of the cards as an array'''
     boardSuits = []
-    for l in range(0, len):
+    for l in range(0, len(board)):
         boardSuits.append(board[l].return_suit_char())
     return boardSuits
 
-def get_hand_pairs(hand):
+
+def get_card_pairs(cards):
     '''Returns a list of card pairs that can be made from a 4 card omaha hand'''
-    hand_pairs = []
-    for i in range(0, 4):
-        for j in range(i+1,4):
-            hand_pairs.append((hand[i], hand[j]))
-    return hand_pairs
+    card_pairs = []
+    for i in range(0, len(cards)):
+        for j in range(i+1,len(cards)):
+            card_pairs.append((cards[i], cards[j]))
+    return card_pairs
+
 
 '''This block of methods determine if a class of hand is possible on a given board'''
+
+
 def check_flush(board):
     '''Returns TRUE if a flush is possible on a given board'''
     board = get_suits(board)
@@ -83,7 +87,6 @@ def check_straight(board):
      to represent the low ace (1) won't have an effect on how the board is read'''
     if sorted[0] == 14:
         sorted.append(1)
-
 
     '''Since the list is sorted, we can just examine pairs of cards that have a card between them,
     (e.g. 1st and 3rd) and check their difference. If it's less than 5 we know a straight is possible.'''
@@ -133,8 +136,12 @@ def check_low(board):
     else:
         return low
 
+
 '''Methods to determine the best possible hand now that we know what hands are possible'''
+
+
 def find_straight_flushes(board):
+
     '''Returns a list of card pairs that make a straight flush, or null if there are none
     Ideally this list will be sorted by strongest to weakest hand'''
 
@@ -175,73 +182,51 @@ def find_boats(board):
 def find_flushes(board, hand):
     '''Returns a list of card pairs that make a flush'''
     flush_cards = []
+    flush_possible = False
+
     '''Info about the suit of the board cards'''
     board_suits = get_suits(board)
+
+    '''Creates a counter that gives us the most commonly occurring suit, and how often it appears'''
     board_counts = Counter(board_suits)
+    '''Which suit:'''
     flush_suit = board_counts.most_common(1)[0][0]
+    '''How often:'''
     count_on_board = board_counts.most_common(1)[0][1]
-    if count_on_board >=3:
+
+    '''A flush is only possible if there is at least 3 of one suit on the board.'''
+    if count_on_board >= 3:
         flush_possible = True
     else:
-        flush_possible = False
+        return flush_cards
 
-
-    '''Info about the suit of the hole cards
-    hand_suits = get_suits(hand, 4)
-    hand_count = Counter(hand_suits)
-    suit_counts = hand_count.most_common(2)
-    flush_one = suit_counts[0][0]
-    count_in_hand = suit_counts[0][1]
-    flush_two = ''
-    count_in_hand_two = 0
-    if len(suit_counts) > 1:
-        flush_two = suit_counts[1][0]
-        count_in_hand_two = suit_counts[1][1]
-
-
-    if flush_suit == flush_one and count_in_hand >=2 and flush_possible:
-        print("A " + flush_suit + " flush is possible")
-    elif flush_suit == flush_two and count_in_hand_two >=2 and flush_possible:
-        print("A " + flush_suit + " flush is possible")
-    else:
-        flush_possible = False
-        print("No flush possible")
-
+    '''This portion of the code only executes if a flush is possible given the board'''
     if flush_possible:
+
+        '''List of flush cards in a given hand'''
+        hand_flush_cards = []
+
+        '''Adds cards to this list if they match the flush suit on the board'''
         for i in hand:
             if i.return_suit_char() == flush_suit:
-                flush_cards.append(i)
+                hand_flush_cards.append(i)
 
-    return flush_cards'''
+        '''If this list has length = 2, only one flush is possible with the hand.
+        If there are more than 2 cards, then the best flush is the biggest 2.'''
+        if len(hand_flush_cards) == 2:
+            return hand_flush_cards
+        elif len(hand_flush_cards) > 2:
+            print("/\/\/\/\/\/\/\/\/\/\/\/\/")
+            '''Get the biggest 2 flush cards'''
+            flush_ranks = get_ranks(hand_flush_cards)
+            sorted = list(reversed(numpy.unique(flush_ranks)))
+            flush_pair = []
+            for i in range(0, len(hand_flush_cards)):
+                if hand_flush_cards[i].return_rank() == sorted[0] or hand_flush_cards[i].return_rank() == sorted[1]:
+                    flush_pair.append(hand_flush_cards[i])
 
-    '''Construct a set of the flush cards on the board, it's complement in the same suit 
-    is the set of possible flush cards that can be in somebody's hand.'''
-    flush_cards_on_board = []
-    for i in board:
-        if i.return_suit_char == flush_suit:
-            flush_cards_on_board.append(i)
-            print(type(i))
-
-    if flush_suit == 's':
-        flush_suit_str = 1
-    elif flush_suit == 'h':
-        flush_suit_str = 2
-    elif flush_suit == 'd':
-        flush_suit_str = 3
-    elif flush_suit == 'c':
-        flush_suit_str = 4
-
-    for j in range(2, 15):
-        nextCard = Card(j, flush_suit_str)
-        flush_cards.append(nextCard)
-
-    if flush_possible:
-        print_cards(flush_cards_on_board)
-
-    diff = [i for i in flush_cards + flush_cards_on_board if i not in flush_cards or i not in flush_cards_on_board]
-
-    print("difference:")
-    print_cards(diff)
+            flush_cards = flush_pair
+    return flush_cards
 
 
 def find_straights(board):
@@ -307,13 +292,17 @@ def best_hand(board, hand):
         find_straights(board)
 
 '''Test run below:'''
-aDeck = Deck()
-anotherDeck = Deck()
-aDeck.shuffle_deck()
-deal_cards(aDeck, 5, boardCards)
-deal_cards(aDeck, 4, playerCards)
-print_cards(boardCards)
-find_flushes(boardCards,playerCards)
+for i in range(0, 1000):
+    boardCards = []
+    playerCards = []
+    aDeck = Deck()
+    aDeck.shuffle_deck()
+    deal_cards(aDeck, 5, boardCards)
+    deal_cards(aDeck, 4, playerCards)
+    if len(find_flushes(boardCards, playerCards)) != 0:
+        print_cards(boardCards)
+        print_cards(playerCards)
+        print_cards(find_flushes(boardCards, playerCards))
 
 
 '''setA = set((aDeck.pop(1),aDeck.pop(45),aDeck.pop(37)))
