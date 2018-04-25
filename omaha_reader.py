@@ -5,6 +5,7 @@ Created on Apr 20, 2018 (blaze it)
 '''
 
 from deck import Deck
+from card import Card
 from collections import Counter
 import numpy
 
@@ -16,8 +17,8 @@ playerCards = []
 '''This first block of methods all set up the board to be read'''
 def print_cards(cards):
     output = ""
-    for i in cards:
-        output = output + i.return_rank_char() + i.return_suit_char() + " "
+    for i in range(0, len(cards)):
+        output = output + cards[i].return_rank_char() + cards[i].return_suit_char() + " "
     print(output)
 
 
@@ -42,6 +43,13 @@ def get_suits(board,len = 5):
         boardSuits.append(board[l].return_suit_char())
     return boardSuits
 
+def get_hand_pairs(hand):
+    '''Returns a list of card pairs that can be made from a 4 card omaha hand'''
+    hand_pairs = []
+    for i in range(0, 4):
+        for j in range(i+1,4):
+            hand_pairs.append((hand[i], hand[j]))
+    return hand_pairs
 
 '''This block of methods determine if a class of hand is possible on a given board'''
 def check_flush(board):
@@ -178,7 +186,7 @@ def find_flushes(board, hand):
         flush_possible = False
 
 
-    '''Info about the suit of the hole cards'''
+    '''Info about the suit of the hole cards
     hand_suits = get_suits(hand, 4)
     hand_count = Counter(hand_suits)
     suit_counts = hand_count.most_common(2)
@@ -204,7 +212,36 @@ def find_flushes(board, hand):
             if i.return_suit_char() == flush_suit:
                 flush_cards.append(i)
 
-    return flush_cards
+    return flush_cards'''
+
+    '''Construct a set of the flush cards on the board, it's complement in the same suit 
+    is the set of possible flush cards that can be in somebody's hand.'''
+    flush_cards_on_board = []
+    for i in board:
+        if i.return_suit_char == flush_suit:
+            flush_cards_on_board.append(i)
+            print(type(i))
+
+    if flush_suit == 's':
+        flush_suit_str = 1
+    elif flush_suit == 'h':
+        flush_suit_str = 2
+    elif flush_suit == 'd':
+        flush_suit_str = 3
+    elif flush_suit == 'c':
+        flush_suit_str = 4
+
+    for j in range(2, 15):
+        nextCard = Card(j, flush_suit_str)
+        flush_cards.append(nextCard)
+
+    if flush_possible:
+        print_cards(flush_cards_on_board)
+
+    diff = [i for i in flush_cards + flush_cards_on_board if i not in flush_cards or i not in flush_cards_on_board]
+
+    print("difference:")
+    print_cards(diff)
 
 
 def find_straights(board):
@@ -262,7 +299,7 @@ def best_hand(board, hand):
     '''Returns the best two cards to play'''
     if check_straight_flush(board) == True:
         find_straight_flushes(board, hand)
-    elif check_quads(board) = True:
+    elif check_quads(board) == True:
         find_quads(board)
     elif check_flush(board) == True:
         find_flushes(board, hand)
@@ -271,22 +308,46 @@ def best_hand(board, hand):
 
 '''Test run below:'''
 aDeck = Deck()
+anotherDeck = Deck()
 aDeck.shuffle_deck()
+deal_cards(aDeck, 5, boardCards)
+deal_cards(aDeck, 4, playerCards)
+print_cards(boardCards)
+find_flushes(boardCards,playerCards)
+
+
+'''setA = set((aDeck.pop(1),aDeck.pop(45),aDeck.pop(37)))
+setB = set((anotherDeck.pop(27),anotherDeck.pop(45),anotherDeck.pop(3)))
+intersect = setA.intersection(setB)
+union = setA.union(setB)
+
+print("Set A:")
+print_cards(list(setA))
+print("Set B:")
+print_cards(list(setB))
+print("Intersection:")
+print_cards(list(intersect))
+print("Union:")
+print_cards(list(union))'''
+
+'''aDeck.shuffle_deck()
 deal_cards(aDeck, 5, boardCards)
 deal_cards(aDeck, 4, playerCards)
 print_cards(boardCards)
 print_cards(playerCards)
 find_flushes(boardCards, playerCards)
+possible_hands = get_hand_pairs(playerCards)
+for i in range(0, len(possible_hands)):
+    print_cards(possible_hands[i])
 
 
-
-#print(find_quads(boardCards))
-#print(find_straights(boardCards))
-#deal_cards(aDeck, 4, playerCards)
-#print_cards(playerCards)
-#check_flush(boardCards)
-#print("Straight: " + str(check_straight(boardCards)))
-#check_quads(boardCards)
-#print("Low: " + str(check_low(boardCards)))
+print(find_quads(boardCards))
+print(find_straights(boardCards))
+deal_cards(aDeck, 4, playerCards)
+print_cards(playerCards)
+check_flush(boardCards)
+print("Straight: " + str(check_straight(boardCards)))
+check_quads(boardCards)
+print("Low: " + str(check_low(boardCards)))'''
 
 

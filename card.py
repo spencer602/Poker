@@ -17,6 +17,13 @@ class Card():
         
         self.initialize()
     
+    def __eq__(self, other):
+        return self.rank == other.rank and self.suit == other.suit
+
+    def __hash__(self):
+        cardID = self.return_rank_char() + self.return_suit_char()
+        return hash(cardID)
+
     def return_rank(self):
         '''returns rank as integer'''
         return self.rank

@@ -10,3 +10,25 @@ be jack, 9 would be 9, etc)
 
 Using the code system this way allows for effective and efficient exhaustive 
 comparison of hands
+
+Examples? I just started dealing out 5 card hands and tried to translate them into the code, please correct and critique
+
+Hand 1: 2c 2h 5h 4s 3h ----> 22543
+
+Hand 2: Ah Ad 4h 4s 3s ----> 31443
+
+Hand 3: 8s 8d 7d 7h 6c ----> 3876
+
+Hand 4: Kh Qs Td 9d 3c ----> 1131210
+
+Hand 5: Ah Js 7s 4s 3s ----> 11411743
+
+Hand 6: Ks Kc Ah Qh 3s ----> 2131412
+
+Hand 7: Ts 8h 5d 4s 3s ----> 1108543
+
+Hand 8: Qd Th 7c 6h 2s ----> 11210762
+
+Hand 9: 6c 6s Qc 3c 4h ----> 261234
+
+Hand 10: 3s 3c Ts 5s 2h ----> 231052

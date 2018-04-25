@@ -9,7 +9,7 @@ from random import randint
 class Deck():
     '''class representing a deck of Cards'''
     
-    def __init__(self, deck_type = 'full_suited'):
+    def __init__(self, deck_type: object = 'full_suited') -> object:
         '''initializer, deck type to create'''
         self.deck = []
         self.initialize(deck_type)
