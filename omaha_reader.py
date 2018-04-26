@@ -53,6 +53,17 @@ def get_card_pairs(cards):
     return card_pairs
 
 
+def card_pair_comparison(cardsA, cardsB):
+    '''Returns true if two pairs of cards are identical'''
+    same = False
+
+    if cardsA[0] == cardsB[0] or cardsA[0] == cardsB[1]:
+        if cardsA[1] == cardsB[0] or cardsA[1] == cardsB[1]:
+            same = True
+            return same
+
+    return same
+
 '''This block of methods determine if a class of hand is possible on a given board'''
 
 
@@ -114,21 +125,26 @@ def check_quads(board):
         return quads
 
 
-def check_straight_flush(board):
-    '''Returns TRUE if a straight flush is possible on a given board'''
-    straightFlush = False
+def check_straight_flush(board, hand):
+    '''Finds all the possible straight flush card pairs on a given board'''
     sf_cards = []
-
+    straight_flushes = []
+    '''First check to see if both a straight and a flush are possible'''
     if check_flush(board) and check_straight(board):
         sf_possibility = []
+        '''Determine which suit the potential straight flush will be'''
         suits = get_suits(board)
         counts = Counter(suits)
         flush_suit = counts.most_common(1)[0][0]
+        '''Add each card of that suit to the list of possible straight flush cards'''
         for card in board:
             if card.return_suit_char() == flush_suit:
                 sf_possibility.append(card)
 
+        '''Get the ranks of all the suited cards, and sort in descending order'''
         ranks = list(reversed(numpy.unique(get_ranks(sf_possibility))))
+
+        '''Make sure cards are properly initialized'''
         if flush_suit == 's':
             flush_suit = 1
         elif flush_suit == 'h':
@@ -138,13 +154,26 @@ def check_straight_flush(board):
         elif flush_suit == 'c':
             flush_suit = 4
 
-        print_cards(board)
+
+        '''Find the possible straights given the suited cards'''
         straights = find_straights(sf_possibility)
         for i in straights:
             sf_cards.append((Card(i[0], flush_suit), Card(i[1], flush_suit)))
 
-        for i in sf_cards:
-            print_cards(list(i))
+        hand_pairs = get_card_pairs(hand)
+        suited_hand_pairs = []
+        for i in hand_pairs:
+            if i[0].return_suit() == i[1].return_suit() == flush_suit:
+                suited_hand_pairs.append(i)
+
+
+        for i in suited_hand_pairs:
+            for j in sf_cards:
+                if card_pair_comparison(i,j):
+                    straight_flushes.append(i)
+
+    return straight_flushes
+
 
 def check_low(board):
     '''Returns TRUE if a low is possible on a given board'''
@@ -167,42 +196,123 @@ def check_low(board):
 '''Methods to determine the best possible hand now that we know what hands are possible'''
 
 
-def find_straight_flushes(board):
+def find_straight_flushes(board, hand):
     '''Returns a list of card pairs that make a straight flush, or null if there are none
     Ideally this list will be sorted by strongest to weakest hand'''
+    '''Finds all the possible straight flush card pairs on a given board'''
+    sf_cards = []
+    straight_flushes = []
+    '''First check to see if both a straight and a flush are possible'''
+    if check_flush(board) and check_straight(board):
+        sf_possibility = []
+        '''Determine which suit the potential straight flush will be'''
+        suits = get_suits(board)
+        counts = Counter(suits)
+        flush_suit = counts.most_common(1)[0][0]
+        '''Add each card of that suit to the list of possible straight flush cards'''
+        for card in board:
+            if card.return_suit_char() == flush_suit:
+                sf_possibility.append(card)
+
+        '''Get the ranks of all the suited cards, and sort in descending order'''
+        ranks = list(reversed(numpy.unique(get_ranks(sf_possibility))))
+
+        '''Make sure cards are properly initialized'''
+        if flush_suit == 's':
+            flush_suit = 1
+        elif flush_suit == 'h':
+            flush_suit = 2
+        elif flush_suit == 'd':
+            flush_suit = 3
+        elif flush_suit == 'c':
+            flush_suit = 4
+
+        '''Find the possible straights given the suited cards'''
+        straights = find_straights(sf_possibility)
+        for i in straights:
+            sf_cards.append((Card(i[0], flush_suit), Card(i[1], flush_suit)))
+
+        '''Get card pairs from the player's hand that are of the correct suit'''
+        hand_pairs = get_card_pairs(hand)
+        suited_hand_pairs = []
+        for i in hand_pairs:
+            if i[0].return_suit() == i[1].return_suit() == flush_suit:
+                suited_hand_pairs.append(i)
+
+        '''Return the card pairs that match possible straight flush card pairs'''
+        for i in suited_hand_pairs:
+            for j in sf_cards:
+                if card_pair_comparison(i, j):
+                    straight_flushes.append(i)
+
+    return straight_flushes
 
 
-def find_quads(board):
+def find_quads(board, hand):
     '''Returns a list of card pairs that make quads'''
     possibleQuads = []
-    board = get_ranks(board)
-    counts = Counter(board)
-    mostCommonRank = counts.most_common(1)[0][0]
-    secondPair = counts.most_common(2)[1][0]
-    mostCount = counts.most_common(1)[0][1]
-    sorted = list(reversed(numpy.unique(board)))
 
-    if len(sorted) == 4:
-        possibleQuads.append((mostCommonRank, mostCommonRank))
-    elif len(sorted) == 3:
-        if mostCount == 3:
-            for i in range(2, 14):
-                if i != mostCommonRank:
-                    possibleQuads.append((mostCommonRank, i))
-        elif mostCount == 2:
-            possibleQuads.append((mostCommonRank, mostCommonRank))
-            possibleQuads.append((secondPair, secondPair))
-    elif len(sorted) == 2:
-        for i in range(2, 14):
-            if i != mostCommonRank:
-                possibleQuads.append((mostCommonRank, i))
-        possibleQuads.append((secondPair, secondPair))
+    '''Get the ranks of the board cards, and how often they appear'''
+    board_ranks = get_ranks(board)
+    counts = Counter(board_ranks).most_common(2)
+    most_common_board_rank = counts[0][0]
+    most_appears_board = counts[0][1]
+    second_common_board_rank = counts[1][0]
+    second_appears_board = counts[1][1]
+
+    sorted = list(reversed(numpy.unique(board_ranks)))
+
+    card_pairs = get_card_pairs(hand)
+
+    if most_appears_board == 1:
+        return possibleQuads
+    elif most_appears_board == 2 or second_appears_board == 2:
+        for i in card_pairs:
+            if i[0].return_rank() == i[1].return_rank() == most_common_board_rank:
+                possibleQuads.append(i)
+            elif i[0].return_rank() == i[1].return_rank() == second_common_board_rank and second_appears_board == 2:
+                possibleQuads.append(i)
+    elif most_appears_board == 3 and second_appears_board == 1:
+        for i in card_pairs:
+            if i[0].return_rank() == most_common_board_rank or i[1].return_rank() == most_common_board_rank:
+                possibleQuads.append(i)
+    elif most_appears_board == 3 and second_appears_board == 2:
+        for i in card_pairs:
+            if i[0].return_rank() == most_common_board_rank or i[1].return_rank() == most_common_board_rank or i[0].return_rank() == i[1].return_rank() == second_common_board_rank:
+                possibleQuads.append(i)
+    elif most_appears_board >=4:
+        return possibleQuads
 
     return possibleQuads
 
 
-def find_boats(board):
+def find_boats(board, hand):
     '''Returns a list of card pairs that make a full house'''
+    boat_cards = []
+    board_ranks = get_ranks(board)
+    counts = Counter(board_ranks).most_common()
+    ''' modal rank of the board = counts[0][0]
+           how often it appears = counts[0][1]
+    2nd modal rank of the board = counts[1][0]
+           how often it appears = counts[1][1]'''
+    card_pairs = get_card_pairs(hand)
+
+    if counts[0][1] == 2:
+        for i in card_pairs:
+            if i[0].return_rank() == counts[0][0] and i[1].return_rank() in board_ranks:
+                boat_cards.append(i)
+            elif i[1].return_rank() == counts[0][0] and i[0].return_rank() in board_ranks:
+                boat_cards.append(i)
+            elif i[1].return_rank() == i[0].return_rank() and i[0].return_rank() in board_ranks:
+                boat_cards.append(i)
+        return boat_cards
+    elif counts[0][1] >= 3:
+        for i in card_pairs:
+            if i[1].return_rank() == i[0].return_rank():
+                boat_cards.append(i)
+        return boat_cards
+    else:
+        return boat_cards
 
 
 def find_flushes(board, hand):
@@ -254,7 +364,7 @@ def find_flushes(board, hand):
     return flush_cards
 
 
-def find_straights(board):
+def find_straights(board, hand):
     '''Returns a list of card pairs that make a straight'''
     possibleStraights = []
 
@@ -296,81 +406,84 @@ def find_straights(board):
         if  0 < possibleStraights[i][0] <= 14 and 0 < possibleStraights[i][1] <= 14:
             straights.append(possibleStraights[i])
 
-    return straights
+    hand_pairs = get_card_pairs(hand)
+    straights_in_hand = []
+    for j in straights:
+        for i in hand_pairs:
+            if (i[0].return_rank() == j[0] and i[1].return_rank() == j[1]) or (i[0].return_rank() == j[1] and i[1].return_rank() == j[0]):
+                straights_in_hand.append(i)
+
+    return set(straights_in_hand)
 
 
-def find_trips(board):
+def find_trips(board, hand):
     '''Returns a list of card pairs that make trips'''
+    trips_cards = []
+    board_ranks = get_ranks(board)
+    counts = Counter(board_ranks).most_common()
+    ''' modal rank of the board = counts[0][0]
+           how often it appears = counts[0][1]
+    2nd modal rank of the board = counts[1][0]
+           how often it appears = counts[1][1]'''
+    card_pairs = get_card_pairs(hand)
 
+    if counts[0][1] == 1:
+        for i in card_pairs:
+            if i[1].return_rank() == i[0].return_rank() and i[0].return_rank() in board_ranks:
+                trips_cards.append(i)
+    elif counts[0][1] == 2:
+        for i in card_pairs:
+            if i[0].return_rank() == counts[0][0] or i[1].return_rank() == counts[0][0]:
+                trips_cards.append(i)
+            elif counts[1][1] == 2:
+                if i[0].return_rank() == counts[1][0] or i[1].return_rank() == counts[1][0]:
+                    trips_cards.append(i)
+    elif counts[0][1] == 3:
+        for i in card_pairs:
+            trips_cards.append(i)
+
+    return trips_cards
 
 def find_pairs(board):
     '''Returns a list of card pairs that make pairs'''
 
+
 def best_hand(board, hand):
     '''Returns the best two cards to play'''
-    if check_straight_flush(board) == True:
-        find_straight_flushes(board, hand)
-    elif check_quads(board) == True:
-        find_quads(board)
-    elif check_flush(board) == True:
-        find_flushes(board, hand)
-    elif check_straight(board) == True:
-        find_straights(board)
+    if len(find_straight_flushes(board,hand)) > 0:
+        return find_straight_flushes(board, hand)
+    elif len(find_quads(board, hand)) > 0:
+        return find_quads(board, hand)
+    elif len(find_flushes(board, hand)) > 0:
+        return find_flushes(board, hand)
+    elif len(find_straights(board, hand)) > 0:
+        return find_straights(board, hand)
 
-'''Test run below:
-for i in range(0, 1000):
+n = 1000
+for i in range(0, n):
     boardCards = []
     playerCards = []
     aDeck = Deck()
     aDeck.shuffle_deck()
     deal_cards(aDeck, 5, boardCards)
     deal_cards(aDeck, 4, playerCards)
-    if len(find_flushes(boardCards, playerCards)) != 0:
+    results = list(find_trips(boardCards, playerCards))
+    if len(results) >= 1:
         print_cards(boardCards)
         print_cards(playerCards)
-        print_cards(find_flushes(boardCards, playerCards))'''
-
-for i in range(0,100):
-    boardCards = []
-    aDeck = Deck()
-    aDeck.shuffle_deck()
-    deal_cards(aDeck, 5, boardCards)
-    check_straight_flush(boardCards)
-    print("///////////////////////")
+        for i in results:
+            print_cards(list(i))
+        print("////////////")
 
 
-'''setA = set((aDeck.pop(1),aDeck.pop(45),aDeck.pop(37)))
-setB = set((anotherDeck.pop(27),anotherDeck.pop(45),anotherDeck.pop(3)))
-intersect = setA.intersection(setB)
-union = setA.union(setB)
-
-print("Set A:")
-print_cards(list(setA))
-print("Set B:")
-print_cards(list(setB))
-print("Intersection:")
-print_cards(list(intersect))
-print("Union:")
-print_cards(list(union))'''
-
-'''aDeck.shuffle_deck()
-deal_cards(aDeck, 5, boardCards)
-deal_cards(aDeck, 4, playerCards)
+'''boardCards = [Card(9, 3), Card(2, 4), Card(5, 3), Card(5, 1), Card(10, 1)]
+playerCards = [Card(9, 4), Card(9, 2), Card(5, 2), Card(4, 3)]
 print_cards(boardCards)
 print_cards(playerCards)
-find_flushes(boardCards, playerCards)
-possible_hands = get_hand_pairs(playerCards)
-for i in range(0, len(possible_hands)):
-    print_cards(possible_hands[i])
+results = find_quads(boardCards,playerCards)
+for i in results:
+    print_cards(i)'''
 
 
-print(find_quads(boardCards))
-print(find_straights(boardCards))
-deal_cards(aDeck, 4, playerCards)
-print_cards(playerCards)
-check_flush(boardCards)
-print("Straight: " + str(check_straight(boardCards)))
-check_quads(boardCards)
-print("Low: " + str(check_low(boardCards)))'''
 
 
