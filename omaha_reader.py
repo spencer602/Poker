@@ -65,7 +65,7 @@ def check_flush(board):
     mostCommonSuit = counts.most_common(1)[0][1]
 
     if(mostCommonSuit>=3):
-        print("Flush is possible")
+        #print("Flush is possible")
         flush = True
 
     return flush
@@ -117,7 +117,34 @@ def check_quads(board):
 def check_straight_flush(board):
     '''Returns TRUE if a straight flush is possible on a given board'''
     straightFlush = False
+    sf_cards = []
 
+    if check_flush(board) and check_straight(board):
+        sf_possibility = []
+        suits = get_suits(board)
+        counts = Counter(suits)
+        flush_suit = counts.most_common(1)[0][0]
+        for card in board:
+            if card.return_suit_char() == flush_suit:
+                sf_possibility.append(card)
+
+        ranks = list(reversed(numpy.unique(get_ranks(sf_possibility))))
+        if flush_suit == 's':
+            flush_suit = 1
+        elif flush_suit == 'h':
+            flush_suit = 2
+        elif flush_suit == 'd':
+            flush_suit = 3
+        elif flush_suit == 'c':
+            flush_suit = 4
+
+        print_cards(board)
+        straights = find_straights(sf_possibility)
+        for i in straights:
+            sf_cards.append((Card(i[0], flush_suit), Card(i[1], flush_suit)))
+
+        for i in sf_cards:
+            print_cards(list(i))
 
 def check_low(board):
     '''Returns TRUE if a low is possible on a given board'''
@@ -141,7 +168,6 @@ def check_low(board):
 
 
 def find_straight_flushes(board):
-
     '''Returns a list of card pairs that make a straight flush, or null if there are none
     Ideally this list will be sorted by strongest to weakest hand'''
 
@@ -216,7 +242,6 @@ def find_flushes(board, hand):
         if len(hand_flush_cards) == 2:
             return hand_flush_cards
         elif len(hand_flush_cards) > 2:
-            print("/\/\/\/\/\/\/\/\/\/\/\/\/")
             '''Get the biggest 2 flush cards'''
             flush_ranks = get_ranks(hand_flush_cards)
             sorted = list(reversed(numpy.unique(flush_ranks)))
@@ -253,6 +278,7 @@ def find_straights(board):
                 possibleStraights.append(theMiddle)
             elif diff_one == 1 and diff_two == 3:
                 possibleStraights.append((sorted[i] - 2, sorted[i] - 4))
+                possibleStraights.append((sorted[i] + 1, sorted[i] - 2))
             elif diff_one == 1 and diff_two == 4:
                 possibleStraights.append((sorted[i] - 2, sorted[i] - 3))
             elif diff_one == 2 and diff_two == 3:
@@ -291,7 +317,7 @@ def best_hand(board, hand):
     elif check_straight(board) == True:
         find_straights(board)
 
-'''Test run below:'''
+'''Test run below:
 for i in range(0, 1000):
     boardCards = []
     playerCards = []
@@ -302,7 +328,15 @@ for i in range(0, 1000):
     if len(find_flushes(boardCards, playerCards)) != 0:
         print_cards(boardCards)
         print_cards(playerCards)
-        print_cards(find_flushes(boardCards, playerCards))
+        print_cards(find_flushes(boardCards, playerCards))'''
+
+for i in range(0,100):
+    boardCards = []
+    aDeck = Deck()
+    aDeck.shuffle_deck()
+    deal_cards(aDeck, 5, boardCards)
+    check_straight_flush(boardCards)
+    print("///////////////////////")
 
 
 '''setA = set((aDeck.pop(1),aDeck.pop(45),aDeck.pop(37)))

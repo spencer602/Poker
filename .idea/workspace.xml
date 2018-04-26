@@ -28,8 +28,8 @@
       <file leaf-file-name="card.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/card.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="560">
-              <caret line="52" selection-start-line="52" selection-end-line="52" />
+            <state relative-caret-position="374">
+              <caret line="129" selection-start-line="129" selection-end-line="129" />
             </state>
           </provider>
         </entry>
@@ -60,8 +60,8 @@
       <file leaf-file-name="omaha_reader.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/omaha_reader.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1341">
-              <caret line="218" column="44" selection-start-line="218" selection-start-column="44" selection-end-line="218" selection-end-column="44" />
+            <state relative-caret-position="212">
+              <caret line="138" column="26" selection-start-line="138" selection-start-column="26" selection-end-line="138" selection-end-column="26" />
               <folding>
                 <element signature="e#60#81#0" expanded="true" />
               </folding>
@@ -196,6 +196,13 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/omaha_reader.py</url>
+          <line>143</line>
+          <option name="timeStamp" value="28" />
+        </line-breakpoint>
+      </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
           <properties notifyOnTerminate="true" exception="BaseException">
@@ -203,7 +210,7 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="27" />
+      <option name="time" value="29" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
@@ -322,15 +329,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/card.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="560">
-          <caret line="52" selection-start-line="52" selection-end-line="52" />
+        <state relative-caret-position="374">
+          <caret line="129" selection-start-line="129" selection-end-line="129" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/omaha_reader.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1341">
-          <caret line="218" column="44" selection-start-line="218" selection-start-column="44" selection-end-line="218" selection-end-column="44" />
+        <state relative-caret-position="212">
+          <caret line="138" column="26" selection-start-line="138" selection-start-column="26" selection-end-line="138" selection-end-column="26" />
           <folding>
             <element signature="e#60#81#0" expanded="true" />
           </folding>
