@@ -7,6 +7,7 @@ Created on Mar 11, 2018
 import card
 import code
 
+
 def read_holdem_hand(hole_cards, board_cards):
     '''read holdem hand. 21 combination of 5 cards. current implementation is an exhaustive approach; 
        checks every possible combination of 5 card hands and evaluates the hand, keeping track of the
@@ -80,7 +81,8 @@ def read_holdem_hand(hole_cards, board_cards):
     if code[0] != -1 and compare_codes(code, highest_code) == 1:
         highest_code = code
         
-    return highest_code     
+    return highest_code
+
     
 def compare_lows(low_list_1, low_list_2):
     '''ascending = - (<) , descending = + (>), congruent with java compareTo(). NOTE!: assumes both lists are exactly 5 elements long
@@ -388,6 +390,7 @@ def check_for_two_pair(cards):
         r -= 1                
     return [0]       
 
+
 def check_for_trips(cards):
     '''check for trips. assuming that full houses have already been caught. 4 element code'''
     rank_count = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -416,6 +419,7 @@ def check_for_trips(cards):
                 k1 -= 1
     return [0] #no trips
 
+
 def check_for_full_house(cards):
     '''check for full house, 3 element code, FH, trips rank, pair rank'''
     code = [0]
@@ -436,6 +440,7 @@ def check_for_full_house(cards):
                     return code
         
     return [0] 
+
 
 def check_for_quads(cards):
     '''checking for 4 of a kind, 3 element code. quads, quads rank, kicker rank'''
@@ -458,6 +463,7 @@ def check_for_quads(cards):
                     return code
                         
     return [0] #no quqds
+
 
 def check_for_straight_flush(cards):
     '''check for straight flush. 2 element code, straight flush code plus the highest straight flush card'''
@@ -486,6 +492,7 @@ def check_for_straight_flush(cards):
 
     return [0] #not a straight flush
 
+
 def check_for_flush(cards):
     '''check for flush, 6-element code, flush plus 5 ranked cards'''
     code = [0]
@@ -508,6 +515,7 @@ def check_for_flush(cards):
             return code
         
     return [0] #not a flush
+
 
 def hand_to_string(code):
     '''depict the code of the hand to a string representing the hand'''
@@ -543,6 +551,7 @@ def hand_to_string(code):
     
     return title    
 
+
 def compare_codes(code_1, code_2):
     '''ascending = - (<) , descending = + (>), congruent with java compareTo()'''
     i = 0
@@ -553,6 +562,7 @@ def compare_codes(code_1, code_2):
             return -1
         i += 1
     return 0
+
 
 def compare_hands(hole_cards_1, hole_cards_2, board_cards, game_type = 'texas'):
     '''ascending = -, descending = +, congruent with java compareTo()'''
@@ -568,6 +578,7 @@ def compare_hands(hole_cards_1, hole_cards_2, board_cards, game_type = 'texas'):
             return -1
         i += 1
     return 0
+
 
 def check_for_straight(cards):
     '''check for straight. 2-element code. straight plus high card'''

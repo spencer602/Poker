@@ -9,12 +9,9 @@ from card import Card
 from collections import Counter
 import numpy
 
-
-boardCards = []
-playerCards = []
-
-
 '''This first block of methods all set up the board to be read'''
+
+
 def print_cards(cards):
     output = ""
     for i in range(0, len(cards)):
@@ -48,7 +45,7 @@ def get_card_pairs(cards):
     '''Returns a list of card pairs that can be made from a 4 card omaha hand'''
     card_pairs = []
     for i in range(0, len(cards)):
-        for j in range(i+1,len(cards)):
+        for j in range(i + 1, len(cards)):
             card_pairs.append((cards[i], cards[j]))
     return card_pairs
 
@@ -64,6 +61,7 @@ def card_pair_comparison(cardsA, cardsB):
 
     return same
 
+
 '''This block of methods determine if a class of hand is possible on a given board'''
 
 
@@ -75,8 +73,8 @@ def check_flush(board):
 
     mostCommonSuit = counts.most_common(1)[0][1]
 
-    if(mostCommonSuit>=3):
-        #print("Flush is possible")
+    if (mostCommonSuit >= 3):
+        # print("Flush is possible")
         flush = True
 
     return flush
@@ -101,7 +99,7 @@ def check_straight(board):
 
     '''Since the list is sorted, we can just examine pairs of cards that have a card between them,
     (e.g. 1st and 3rd) and check their difference. If it's less than 5 we know a straight is possible.'''
-    for i in range(0, len(sorted)-2):
+    for i in range(0, len(sorted) - 2):
         diff_one = sorted[i] - sorted[i + 1]
         diff_two = sorted[i] - sorted[i + 2]
         if diff_two < 5:
@@ -154,7 +152,6 @@ def check_straight_flush(board, hand):
         elif flush_suit == 'c':
             flush_suit = 4
 
-
         '''Find the possible straights given the suited cards'''
         straights = find_straights(sf_possibility)
         for i in straights:
@@ -166,10 +163,9 @@ def check_straight_flush(board, hand):
             if i[0].return_suit() == i[1].return_suit() == flush_suit:
                 suited_hand_pairs.append(i)
 
-
         for i in suited_hand_pairs:
             for j in sf_cards:
-                if card_pair_comparison(i,j):
+                if card_pair_comparison(i, j):
                     straight_flushes.append(i)
 
     return straight_flushes
@@ -207,8 +203,8 @@ def find_straight_flushes(board, hand):
         sf_possibility = []
         '''Determine which suit the potential straight flush will be'''
         suits = get_suits(board)
-        counts = Counter(suits)
-        flush_suit = counts.most_common(1)[0][0]
+        counts = Counter(suits).most_common()
+        flush_suit = counts[0][0]
         '''Add each card of that suit to the list of possible straight flush cards'''
         for card in board:
             if card.return_suit_char() == flush_suit:
@@ -278,9 +274,10 @@ def find_quads(board, hand):
                 possibleQuads.append(i)
     elif most_appears_board == 3 and second_appears_board == 2:
         for i in card_pairs:
-            if i[0].return_rank() == most_common_board_rank or i[1].return_rank() == most_common_board_rank or i[0].return_rank() == i[1].return_rank() == second_common_board_rank:
+            if i[0].return_rank() == most_common_board_rank or i[1].return_rank() == most_common_board_rank or i[
+                0].return_rank() == i[1].return_rank() == second_common_board_rank:
                 possibleQuads.append(i)
-    elif most_appears_board >=4:
+    elif most_appears_board >= 4:
         return possibleQuads
 
     return possibleQuads
@@ -367,6 +364,7 @@ def find_flushes(board, hand):
 def find_straights(board, hand):
     '''Returns a list of card pairs that make a straight'''
     possibleStraights = []
+    card_pairs = []
 
     '''Gets the ranks, sorts the board, and adds the low ace exactly like check_straight()'''
     board = get_ranks(board)
@@ -380,40 +378,59 @@ def find_straights(board, hand):
 
         if diff_two < 5:
             if diff_one == 1 and diff_two == 2:
-                theNuts = (sorted[i] + 2, sorted[i] + 1)
-                theDumbEnd = (sorted[i] - 3, sorted[i] - 4)
-                theMiddle = (sorted[i] + 1, sorted[i] - 3)
-                possibleStraights.append(theNuts)
-                possibleStraights.append(theDumbEnd)
-                possibleStraights.append(theMiddle)
+                possibleStraights.append((sorted[i] + 2, sorted[i] + 1, sorted[i], sorted[i] - 1, sorted[i] - 2))
+                possibleStraights.append((sorted[i], sorted[i] - 1, sorted[i] - 2, sorted[i] - 3, sorted[i] - 4))
+                possibleStraights.append((sorted[i] + 1, sorted[i], sorted[i] - 1, sorted[i] - 2, sorted[i] - 3))
+                card_pairs.append((sorted[i] + 2, sorted[i] + 1))
+                card_pairs.append((sorted[i] - 3, sorted[i] - 4))
+                card_pairs.append((sorted[i] + 1, sorted[i] - 3))
             elif diff_one == 1 and diff_two == 3:
-                possibleStraights.append((sorted[i] - 2, sorted[i] - 4))
-                possibleStraights.append((sorted[i] + 1, sorted[i] - 2))
+                possibleStraights.append((sorted[i], sorted[i] - 1, sorted[i] - 2, sorted[i] - 3, sorted[i] - 4))
+                possibleStraights.append((sorted[i] + 1, sorted[i], sorted[i] - 1, sorted[i] - 2, sorted[i] - 3))
+                card_pairs.append((sorted[i] - 2, sorted[i] - 4))
+                card_pairs.append((sorted[i] + 1, sorted[i] - 2))
             elif diff_one == 1 and diff_two == 4:
-                possibleStraights.append((sorted[i] - 2, sorted[i] - 3))
+                possibleStraights.append((sorted[i], sorted[i] - 1, sorted[i] - 2, sorted[i] - 3, sorted[i] - 4))
+                card_pairs.append((sorted[i] - 2, sorted[i] - 3))
             elif diff_one == 2 and diff_two == 3:
-                possibleStraights.append((sorted[i] - 1, sorted[i] - 4))
+                possibleStraights.append((sorted[i], sorted[i] - 1, sorted[i] - 2, sorted[i] - 3, sorted[i] - 4))
+                possibleStraights.append((sorted[i] + 1, sorted[i], sorted[i] - 1, sorted[i] - 2, sorted[i] - 3))
+                card_pairs.append((sorted[i] - 1, sorted[i] - 4))
+                card_pairs.append((sorted[i] + 1, sorted[i] - 1))
             elif diff_one == 2 and diff_two == 4:
-                possibleStraights.append((sorted[i] - 1, sorted[i] - 3))
+                possibleStraights.append((sorted[i], sorted[i] - 1, sorted[i] - 2, sorted[i] - 3, sorted[i] - 4))
+                card_pairs.append((sorted[i] - 1, sorted[i] - 3))
             elif diff_one == 3 and diff_two == 4:
-                possibleStraights.append((sorted[i] - 1, sorted[i] - 2))
+                possibleStraights.append((sorted[i], sorted[i] - 1, sorted[i] - 2, sorted[i] - 3, sorted[i] - 4))
+                card_pairs.append((sorted[i] - 1, sorted[i] - 2))
 
     '''The algorithm above includes cards that don't exist. For example on a KQJ board,
     it would give (15,14) as an option. The loop below deletes elements that contain non-
     existent cards.'''
     straights = []
-    for i in range(0,len(possibleStraights)):
-        if  0 < possibleStraights[i][0] <= 14 and 0 < possibleStraights[i][1] <= 14:
+    hole_cards = []
+    for i in range(0, len(possibleStraights)):
+        if possibleStraights[i][0] <= 14:
             straights.append(possibleStraights[i])
+            hole_cards.append(card_pairs[i])
 
     hand_pairs = get_card_pairs(hand)
-    straights_in_hand = []
-    for j in straights:
+    made_straight = []
+    for j in range(0, len(straights)):
         for i in hand_pairs:
-            if (i[0].return_rank() == j[0] and i[1].return_rank() == j[1]) or (i[0].return_rank() == j[1] and i[1].return_rank() == j[0]):
-                straights_in_hand.append(i)
+            if (i[0].return_rank() == hole_cards[j][0] and i[1].return_rank() == hole_cards[j][1]) \
+                    or (i[0].return_rank() == hole_cards[j][1] and i[1].return_rank() == hole_cards[j][0]):
+                made_straight.append(straights[j])
 
-    return set(straights_in_hand)
+
+    if len(made_straight) > 0:
+        largest = 0
+        for i in range(1, len(made_straight)):
+            if made_straight[i][0] > made_straight[largest][0]:
+                largest = i
+        return made_straight[largest]
+
+    return made_straight
 
 
 def find_trips(board, hand):
@@ -444,13 +461,10 @@ def find_trips(board, hand):
 
     return trips_cards
 
-def find_pairs(board):
-    '''Returns a list of card pairs that make pairs'''
-
 
 def best_hand(board, hand):
     '''Returns the best two cards to play'''
-    if len(find_straight_flushes(board,hand)) > 0:
+    if len(find_straight_flushes(board, hand)) > 0:
         return find_straight_flushes(board, hand)
     elif len(find_quads(board, hand)) > 0:
         return find_quads(board, hand)
@@ -459,31 +473,30 @@ def best_hand(board, hand):
     elif len(find_straights(board, hand)) > 0:
         return find_straights(board, hand)
 
-n = 1000
-for i in range(0, n):
-    boardCards = []
-    playerCards = []
-    aDeck = Deck()
-    aDeck.shuffle_deck()
-    deal_cards(aDeck, 5, boardCards)
-    deal_cards(aDeck, 4, playerCards)
-    results = list(find_trips(boardCards, playerCards))
-    if len(results) >= 1:
-        print_cards(boardCards)
-        print_cards(playerCards)
-        for i in results:
-            print_cards(list(i))
-        print("////////////")
+
+def test_run(n):
+    for i in range(0, n):
+        boardCards = []
+        playerCards = []
+        aDeck = Deck()
+        aDeck.shuffle_deck()
+        deal_cards(aDeck, 5, boardCards)
+        deal_cards(aDeck, 4, playerCards)
+        results = list(find_straights(boardCards, playerCards))
+        if len(results) >= 1:
+            print_cards(boardCards)
+            print_cards(playerCards)
+            print(results)
+            print("////////////")
 
 
-'''boardCards = [Card(9, 3), Card(2, 4), Card(5, 3), Card(5, 1), Card(10, 1)]
-playerCards = [Card(9, 4), Card(9, 2), Card(5, 2), Card(4, 3)]
+test_run(100)
+'''
+boardCards = [Card(13, 3), Card(12, 4), Card(11, 3), Card(9, 1), Card(5, 1)]
+playerCards = [Card(8, 4), Card(3, 2), Card(14, 2), Card(10, 3)]
 print_cards(boardCards)
 print_cards(playerCards)
-results = find_quads(boardCards,playerCards)
+results = list(find_straights(boardCards,playerCards))
 for i in results:
-    print_cards(i)'''
-
-
-
-
+    print(i)
+'''
