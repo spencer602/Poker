@@ -12,6 +12,9 @@ def read_holdem_hand(hole_cards, board_cards):
        largest hand found. returns the "code" of the best possible hand'''
     cards = []
     
+    possibilities = check_possibilities(hole_cards, board_cards, big_omaha = False)
+
+    
     board_card_1 = [0,0,0,0,0,0,1,1,1,2]
     board_card_2 = [1,1,1,2,2,3,2,2,3,3]
     board_card_3 = [2,3,4,3,4,4,3,4,4,4]
@@ -48,7 +51,7 @@ def read_holdem_hand(hole_cards, board_cards):
         cards.append(board_cards[board_card_3[bci]])
         cards.append(board_cards[board_card_4[bci]])
 
-        code = read_hand(cards, highest_code[0])        
+        code = read_hand(cards, highest_code[0], possibilities)        
         
         if code[0] != -1 and compare_codes(code, highest_code) == 1:
             highest_code = code
@@ -95,10 +98,50 @@ def compare_lows(low_list_1, low_list_2):
         
     return 0
 
+def check_possibilities(hole_cards, board_cards, big_omaha = False):
+    '''returns a list of booleans of whether or not some hands are possible. This is a quick test before actually exhaustively reading
+       hands to save time and resources. 
+       list of booleans looks like [board_pair, flush, low] ex: [False, True, False]'''
+       
+    possibilities = [False, False, False]
+    ranks = [0,0,0,0,0,0,0,0,0,0,0,0,0]
+    suits = [0,0,0,0]
+    low_list = []
+       
+    for c in board_cards:
+        ranks[c.return_rank() - 2] += 1
+        suits[c.return_suit() - 1] += 1
+        if c.return_rank() <= 8 or c.return_rank() == 14:
+            if low_list.count(c.return_rank()) == 0:
+                low_list.append(c)
+       
+    #check for board pair     
+    for r in ranks:
+        if r > 1:
+            possibilities[0] = True
+            break;
+    
+    #check for flush possible
+    for s in suits:
+        if s >= 3:
+            possibilities[1] = True
+            break;
+        
+    #check for low possible
+    if len(low_list) >= 3:
+        possibilities[2] = True
+        
+    return possibilities
+
 
 def read_omaha_low(hole_cards, board_cards, big_omaha = False):
     '''read omaha low hand. returns a descending list of exactly 5 integers, no repeats, representing low. if no low possible, returns 
        a list with exactly one element [-1]  '''
+    
+    possibilities = check_possibilities(hole_cards, board_cards, big_omaha)
+    
+    if not possibilities[2]:
+        return [-1]
     
     if big_omaha:
         hole_card_1 = [0,0,0,0,1,1,1,2,2,3]
@@ -121,11 +164,39 @@ def read_omaha_low(hole_cards, board_cards, big_omaha = False):
         hc.append(hole_cards[hole_card_1[hci]])
         hc.append(hole_cards[hole_card_2[hci]])
         
+        if hc[0].return_rank() > 8 and hc[0].return_rank() != 14:
+            continue
+        if hc[1].return_rank() > 8 and hc[1].return_rank() != 14:
+            continue
+        if hc[0].return_rank() == hc[1].return_rank():
+            continue
+        if hc[0].return_rank() > lowest[0] and lowest[0] != -1:
+            continue
+        if hc[1].return_rank() > lowest[0] and lowest[0] != -1:
+            continue
+        
         for bci in range(board_card_1.__len__()):
             bc = []
             bc.append(board_cards[board_card_1[bci]])
             bc.append(board_cards[board_card_2[bci]])
             bc.append(board_cards[board_card_3[bci]])
+            
+            if bc[0].return_rank() > 8 and bc[0].return_rank() != 14:
+                continue
+            if bc[1].return_rank() > 8 and bc[1].return_rank() != 14:
+                continue
+            if bc[2].return_rank() > 8 and bc[2].return_rank() != 14:
+                continue
+            if bc[0].return_rank() == bc[1].return_rank() or bc[2].return_rank() == bc[1].return_rank():
+                continue
+            if bc[0].return_rank() == bc[2].return_rank():
+                continue
+            if bc[0].return_rank() > lowest[0] and lowest[0] != -1:
+                continue
+            if bc[1].return_rank() > lowest[0] and lowest[0] != -1:
+                continue
+            if bc[2].return_rank() > lowest[0] and lowest[0] != -1:
+                continue
             
             cards.clear()
             
@@ -178,6 +249,8 @@ def read_omaha_hand(hole_cards, board_cards, big_omaha = False):
     '''read omaha hand, same way as holdem hand. check all 60 combinations 
     of using 2 from your hand, 3 from the board'''
     
+    possibilities = check_possibilities(hole_cards, board_cards, big_omaha)
+    
     if big_omaha:
         hole_card_1 = [0,0,0,0,1,1,1,2,2,3]
         hole_card_2 = [1,2,3,4,2,3,4,3,4,4]
@@ -214,7 +287,7 @@ def read_omaha_hand(hole_cards, board_cards, big_omaha = False):
             for b in bc:
                 cards.append(b)
             
-            code = read_hand(cards, highest_code[0])
+            code = read_hand(cards, highest_code[0], possibilities)
             
             if code[0] != -1 and compare_codes(code, highest_code) == 1:
                 highest_code = code
@@ -239,40 +312,44 @@ def sort_cards(unsorted):
     return sorted
 
             
-def read_hand(cards, lower_limit = 0):
+def read_hand(cards, lower_limit = 0, possibilities = [True, True, True]):
     '''read a poker hand. will search for hands >= to lower limit. will not search for hands lower
        than lower limit parameter. if searching is ended prematurely due to the lower limit parameter, 
        a list containing -1 will be returned. the "cards" parameter expects a list of exactly 5 card instances'''
         
     cards = sort_cards(cards) #sort cards first, descending order based on rank
     
-    code = check_for_straight_flush(cards)
-    if code[0] == 9:
-        return code
+    if possibilities[1]:
+        code = check_for_straight_flush(cards)
+        if code[0] == 9:
+            return code
     
     #if we dont need to check for any hands lower than straight flush
     if lower_limit == 9:
         return [-1]
     
-    code = check_for_quads(cards)
-    if code[0] == 8:
-        return code
+    if possibilities[0]:
+        code = check_for_quads(cards)
+        if code[0] == 8:
+            return code
     
     #if we dont need to check for any hands lower than quads
     if lower_limit == 8:
         return [-1]
     
-    code = check_for_full_house(cards)
-    if code[0] == 7:
-        return code
+    if possibilities[0]:
+        code = check_for_full_house(cards)
+        if code[0] == 7:
+            return code
    
     #if we dont need to check for any hands lower than full house    
     if lower_limit == 7:
         return [-1]
     
-    code = check_for_flush(cards)
-    if code[0] == 6:
-        return code
+    if possibilities[1]:
+        code = check_for_flush(cards)
+        if code[0] == 6:
+            return code
     
     #if we dont need to sheck for any hands lower than flush
     if lower_limit == 6:

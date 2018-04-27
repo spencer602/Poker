@@ -14,6 +14,12 @@ class Deck():
         self.deck = []
         self.initialize(deck_type)
         
+    def get_card(self, rank, suit):
+        '''pop specific card from deck. rank 2-14, suit 1-4'''
+        for c in self.deck:
+            if c.return_rank() == rank and c.return_suit() == suit:
+                return self.deck.pop(self.deck.index(c))
+        
     def initialize(self, deck_type = 'full_suited'):
         '''initialize the deck depending on deck_type'''
         

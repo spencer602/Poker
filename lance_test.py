@@ -8,27 +8,35 @@ import poker
 import deck
 import card
 
+import time
+
 lance = 0.0
 jonny = 0.0
 
-for i in range(100000000):
+start_time = time.time()
+this_deck = deck.Deck()
+
+big_o_hand = []
+ace_deuce_hand = []
+board_cards = []
+
+
+for i in range(1,1000000):
     pot = 2.0
     
     lance -= 1.0
     jonny -= 1.0
     
-    this_deck = deck.Deck()
-
-    big_o_hand = []
-    ace_deuce_hand = []
-    board_cards = []
+    big_o_hand.clear()
+    ace_deuce_hand.clear()
+    board_cards.clear()
     
-    ace_deuce_hand.append(this_deck.pop())
-    ace_deuce_hand.append(this_deck.pop())
-    
+    ace_deuce_hand.append(this_deck.get_card(14, 1))
+    ace_deuce_hand.append(this_deck.get_card(14, 2))  
+    ace_deuce_hand.append(this_deck.get_card(14, 3))
+        
     this_deck.shuffle_deck()
     
-    ace_deuce_hand.append(this_deck.pop())
     ace_deuce_hand.append(this_deck.pop())
     
     for l in range(5):
@@ -82,7 +90,19 @@ for i in range(100000000):
         print(str(i))
         print("Lance: " + str(lance))
         print("Jonny: " + str(jonny))
+        
+        print("Control Hand ROI: " + str(round((lance / i)*100, 2)) + "%")
+
         print()
+        
+        
+    this_deck.push(big_o_hand)
+    this_deck.push(ace_deuce_hand)
+    this_deck.push(board_cards)
+        
+finish_time = time.time()
+
+print(finish_time - start_time)
         
 
 
