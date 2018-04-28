@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="df74e84c-32e9-4605-b7f1-28344700e9cb" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/omaha_reader.py" beforeDir="false" afterPath="$PROJECT_DIR$/omaha_reader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/poker.py" beforeDir="false" afterPath="$PROJECT_DIR$/poker.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -29,7 +28,7 @@
       <file leaf-file-name="card.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/card.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="314">
+            <state relative-caret-position="164">
               <caret line="28" selection-start-line="28" selection-end-line="28" />
             </state>
           </provider>
@@ -38,19 +37,20 @@
       <file leaf-file-name="poker.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/poker.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="730">
+            <state relative-caret-position="561">
               <caret line="392" selection-start-line="392" selection-end-line="392" />
               <folding>
+                <element signature="e#51#62#0" expanded="true" />
                 <element signature="e#127#2609#0" />
                 <element signature="e#2666#3075#0" />
                 <element signature="e#3146#5542#0" />
                 <element signature="e#5622#7029#0" />
                 <element signature="e#7066#7402#0" />
                 <element signature="e#7460#9643#0" />
+                <element signature="e#9685#11128#0" />
                 <element signature="e#11190#12274#0" />
                 <element signature="e#12315#13380#0" />
                 <element signature="e#13419#14091#0" />
-                <element signature="e#14126#14802#0" />
                 <element signature="e#14845#15872#0" />
                 <element signature="e#15906#16502#0" />
                 <element signature="e#16534#17625#0" />
@@ -65,21 +65,26 @@
       <file leaf-file-name="omaha_reader.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/omaha_reader.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="144">
-              <caret line="425" column="29" selection-start-line="425" selection-start-column="29" selection-end-line="425" selection-end-column="29" />
+            <state relative-caret-position="771">
+              <caret line="585" lean-forward="true" selection-start-line="585" selection-end-line="585" />
               <folding>
+                <element signature="e#60#81#0" expanded="true" />
+                <element signature="e#246#377#0" />
                 <element signature="e#453#545#0" />
                 <element signature="e#574#739#0" />
                 <element signature="e#776#948#0" />
+                <element signature="e#980#1205#0" />
                 <element signature="e#1297#1576#0" />
                 <element signature="e#1321#1606#0" />
                 <element signature="e#1640#2644#0" />
                 <element signature="e#2675#3030#0" />
                 <element signature="e#3434#5234#0" />
                 <element signature="e#4921#5267#0" />
-                <element signature="e#7794#9696#0" />
-                <element signature="e#9395#10481#0" />
+                <element signature="e#5668#7397#0" />
+                <element signature="e#7472#11390#0" />
+                <element signature="e#11462#14247#0" />
                 <element signature="e#9767#11577#0" />
+                <element signature="e#12347#16002#0" />
                 <element signature="e#14659#15689#0" />
                 <element signature="e#14080#14479#0" />
               </folding>
@@ -96,6 +101,11 @@
       </list>
     </option>
   </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>i</find>
+    </findStrings>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -110,8 +120,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="486" />
-    <option name="width" value="1441" />
+    <option name="x" value="518" />
+    <option name="width" value="1409" />
     <option name="height" value="1047" />
   </component>
   <component name="ProjectView">
@@ -187,19 +197,19 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="486" y="0" width="1441" height="1047" extended-state="0" />
+    <frame x="518" y="0" width="1409" height="1047" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.12982456" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1328069" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.50092083" side_tool="true" weight="0.32939914" />
+      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.5010768" side_tool="true" weight="0.4195279" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Python Console" order="7" />
       <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.4990792" visible="true" weight="0.32939914" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="7" />
       <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.5386266" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49892318" weight="0.54077256" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -214,13 +224,6 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/omaha_reader.py</url>
-          <line>424</line>
-          <option name="timeStamp" value="52" />
-        </line-breakpoint>
-      </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
           <properties notifyOnTerminate="true" exception="BaseException">
@@ -228,7 +231,7 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="53" />
+      <option name="time" value="79" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
@@ -261,18 +264,23 @@
         <state relative-caret-position="4709">
           <caret line="303" column="22" selection-start-line="303" selection-start-column="22" selection-end-line="303" selection-end-column="22" />
           <folding>
+            <element signature="e#60#81#0" expanded="true" />
+            <element signature="e#246#377#0" />
             <element signature="e#453#545#0" />
             <element signature="e#574#739#0" />
             <element signature="e#776#948#0" />
+            <element signature="e#980#1205#0" />
             <element signature="e#1297#1576#0" />
             <element signature="e#1321#1606#0" />
             <element signature="e#1640#2644#0" />
             <element signature="e#2675#3030#0" />
             <element signature="e#3434#5234#0" />
             <element signature="e#4921#5267#0" />
-            <element signature="e#7794#9696#0" />
-            <element signature="e#9395#10481#0" />
+            <element signature="e#5668#7397#0" />
+            <element signature="e#7472#11390#0" />
+            <element signature="e#11462#14247#0" />
             <element signature="e#9767#11577#0" />
+            <element signature="e#12347#16002#0" />
             <element signature="e#14659#15689#0" />
             <element signature="e#14080#14479#0" />
           </folding>
@@ -360,19 +368,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/poker.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="730">
+        <state relative-caret-position="561">
           <caret line="392" selection-start-line="392" selection-end-line="392" />
           <folding>
+            <element signature="e#51#62#0" expanded="true" />
             <element signature="e#127#2609#0" />
             <element signature="e#2666#3075#0" />
             <element signature="e#3146#5542#0" />
             <element signature="e#5622#7029#0" />
             <element signature="e#7066#7402#0" />
             <element signature="e#7460#9643#0" />
+            <element signature="e#9685#11128#0" />
             <element signature="e#11190#12274#0" />
             <element signature="e#12315#13380#0" />
             <element signature="e#13419#14091#0" />
-            <element signature="e#14126#14802#0" />
             <element signature="e#14845#15872#0" />
             <element signature="e#15906#16502#0" />
             <element signature="e#16534#17625#0" />
@@ -385,28 +394,33 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/card.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="314">
+        <state relative-caret-position="164">
           <caret line="28" selection-start-line="28" selection-end-line="28" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/omaha_reader.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="425" column="29" selection-start-line="425" selection-start-column="29" selection-end-line="425" selection-end-column="29" />
+        <state relative-caret-position="771">
+          <caret line="585" lean-forward="true" selection-start-line="585" selection-end-line="585" />
           <folding>
+            <element signature="e#60#81#0" expanded="true" />
+            <element signature="e#246#377#0" />
             <element signature="e#453#545#0" />
             <element signature="e#574#739#0" />
             <element signature="e#776#948#0" />
+            <element signature="e#980#1205#0" />
             <element signature="e#1297#1576#0" />
             <element signature="e#1321#1606#0" />
             <element signature="e#1640#2644#0" />
             <element signature="e#2675#3030#0" />
             <element signature="e#3434#5234#0" />
             <element signature="e#4921#5267#0" />
-            <element signature="e#7794#9696#0" />
-            <element signature="e#9395#10481#0" />
+            <element signature="e#5668#7397#0" />
+            <element signature="e#7472#11390#0" />
+            <element signature="e#11462#14247#0" />
             <element signature="e#9767#11577#0" />
+            <element signature="e#12347#16002#0" />
             <element signature="e#14659#15689#0" />
             <element signature="e#14080#14479#0" />
           </folding>
