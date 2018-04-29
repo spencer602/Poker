@@ -9,6 +9,7 @@ from card import Card
 from collections import Counter
 import numpy
 import poker
+import itertools
 
 '''This first block of methods all set up the board to be read'''
 
@@ -27,7 +28,7 @@ def deal_cards(deck, cards, who):
 
 
 def get_ranks(board):
-    '''Returns the rank of the cards as an array'''
+    '''Returns the rank of the cards as a list'''
     boardRanks = []
     for k in range(0, len(board)):
         boardRanks.append(board[k].return_rank())
@@ -35,7 +36,7 @@ def get_ranks(board):
 
 
 def get_suits(board):
-    '''Returns the suit of the cards as an array'''
+    '''Returns the suit of the cards as a list'''
     boardSuits = []
     for l in range(0, len(board)):
         boardSuits.append(board[l].return_suit_char())
@@ -49,6 +50,11 @@ def get_card_pairs(cards):
         for j in range(i + 1, len(cards)):
             card_pairs.append([cards[i], cards[j]])
     return card_pairs
+
+
+def get_subsets(cards, n):
+    '''Returns a list of all subsets of "cards" with n elements'''
+    return list(itertools.combinations(cards, n))
 
 
 def card_pair_comparison(cardsA, cardsB):
@@ -228,23 +234,20 @@ def find_straight_flushes(board, hand):
 
         '''Find the possible straights given the suited cards'''
         straight_flushes = find_straights(sf_possibility, suited_hand_cards)
-        for i in straight_flushes:
-            sf_cards.append((Card(i[0], flush_suit), Card(i[1], flush_suit), Card(i[2], flush_suit), Card(i[3], flush_suit), Card(i[4], flush_suit)))
-        if len(straight_flushes) > 0:
-            return sf_cards[0]
+        if straight_flushes == [0]:
+            return [0]
         else:
-            return sf_cards
+            return [9, straight_flushes[1][0]]
     else:
-        return sf_cards
+        return [0]
 
 
 def find_quads(board, hand):
     '''Returns a list of card pairs that make quads'''
     possibleQuads = []
-    if check_quads(board) == False:
-        return possibleQuads
     '''Get the ranks of the board cards, and how often they appear'''
     board_ranks = get_ranks(board)
+    hand_ranks = get_ranks(hand)
     counts = Counter(board_ranks).most_common(2)
     most_common_board_rank = counts[0][0]
     most_appears_board = counts[0][1]
@@ -256,8 +259,8 @@ def find_quads(board, hand):
     card_pairs = get_card_pairs(hand)
 
     if most_appears_board == 1:  #Unpaired board, no quads possible
-        return possibleQuads
-    elif most_appears_board == 2 or second_appears_board == 2:  #Single or double paired board
+        return [0]
+    elif (most_appears_board == 2 or second_appears_board == 2) and not set(board_ranks).isdisjoint(set(hand_ranks)):  #Single or double paired board
         for i in card_pairs:
             if i[0].return_rank() == i[1].return_rank() == most_common_board_rank:
                 non_quads = [x for x in sorted if x != most_common_board_rank]
@@ -277,7 +280,7 @@ def find_quads(board, hand):
                         i.append(j)
                 del i[5:]
                 possibleQuads.append(i)
-    elif most_appears_board == 3 and second_appears_board == 1:  #Tripled board
+    elif most_appears_board == 3 and second_appears_board == 1 and not set(board_ranks).isdisjoint(set(hand_ranks)):  #Tripled board
         for i in card_pairs:
             if i[0].return_rank() == most_common_board_rank or i[1].return_rank() == most_common_board_rank:
                 non_quads = [x for x in sorted if x != most_common_board_rank]
@@ -288,7 +291,7 @@ def find_quads(board, hand):
                     if j.return_rank() == non_quads[0] and len(i) < 5:
                         i.append(j)
                 possibleQuads.append(i)
-    elif most_appears_board == 3 and second_appears_board == 2:  #Full house on board
+    elif most_appears_board == 3 and second_appears_board == 2 and not set(board_ranks).isdisjoint(set(hand_ranks)):  #Full house on board
         for i in card_pairs:
             if i[0].return_rank() == most_common_board_rank or i[1].return_rank() == most_common_board_rank:
                 non_quads = [x for x in sorted if x != most_common_board_rank]
@@ -309,7 +312,7 @@ def find_quads(board, hand):
                         i.append(j)
                 possibleQuads.append(i)
     elif most_appears_board >= 4:  #Quads on board, no quads possible
-        return possibleQuads
+        return [0]
 
     largest = 0
 
@@ -323,9 +326,9 @@ def find_quads(board, hand):
     del possibleQuads[1:]
 
     if len(possibleQuads) > 0:
-        return possibleQuads[0]
+        return poker.check_for_quads(possibleQuads[0])
     else:
-        return possibleQuads
+        return [0]
 
 
 def find_boats(board, hand):
@@ -387,9 +390,9 @@ def find_boats(board, hand):
     del boat_cards[1:]
 
     if len(boat_cards) > 0:
-        return boat_cards[0]
+        return poker.check_for_full_house(boat_cards[0])
     else:
-        return boat_cards
+        return [0]
 
 
 def find_flushes(board, hand):
@@ -399,7 +402,6 @@ def find_flushes(board, hand):
 
     '''Info about the suit of the board cards'''
     board_suits = get_suits(board)
-
     '''Creates a counter that gives us the most commonly occurring suit, and how often it appears'''
     board_counts = Counter(board_suits)
     '''Which suit:'''
@@ -407,11 +409,20 @@ def find_flushes(board, hand):
     '''How often:'''
     count_on_board = board_counts.most_common(1)[0][1]
 
+    board_flush_cards = []
+    for j in board:
+        if j.return_suit_char() == flush_suit:
+            board_flush_cards.append(j)
+    board_ranks = get_ranks(board_flush_cards)
+    sorted = list(reversed(numpy.unique(board_ranks)))
+    del sorted[3:]
+
+
     '''A flush is only possible if there is at least 3 of one suit on the board.'''
     if count_on_board >= 3:
         flush_possible = True
     else:
-        return flush_cards
+        return [0]
 
     '''This portion of the code only executes if a flush is possible given the board'''
     if flush_possible:
@@ -427,18 +438,23 @@ def find_flushes(board, hand):
         '''If this list has length = 2, only one flush is possible with the hand.
         If there are more than 2 cards, then the best flush is the biggest 2.'''
         if len(hand_flush_cards) == 2:
-            return hand_flush_cards
+            for j in board:
+                if j.return_suit_char() == flush_suit and j.return_rank() in sorted:
+                    hand_flush_cards.append(j)
+            flush_cards = hand_flush_cards
         elif len(hand_flush_cards) > 2:
             '''Get the biggest 2 flush cards'''
             flush_ranks = get_ranks(hand_flush_cards)
-            sorted = list(reversed(numpy.unique(flush_ranks)))
+            sorted_hand = list(reversed(numpy.unique(flush_ranks)))
             flush_pair = []
             for i in range(0, len(hand_flush_cards)):
-                if hand_flush_cards[i].return_rank() == sorted[0] or hand_flush_cards[i].return_rank() == sorted[1]:
+                if hand_flush_cards[i].return_rank() == sorted_hand[0] or hand_flush_cards[i].return_rank() == sorted_hand[1]:
                     flush_pair.append(hand_flush_cards[i])
-
+            for j in board:
+                if j.return_suit_char() == flush_suit and j.return_rank() in sorted:
+                    flush_pair.append(j)
             flush_cards = flush_pair
-    return flush_cards
+    return poker.check_for_flush(flush_cards)
 
 
 def find_straights(board, hand):
@@ -508,9 +524,9 @@ def find_straights(board, hand):
             if made_straight[i][0] > made_straight[largest][0]:
                 largest = i
         made_straight.insert(0, made_straight.pop(largest))
-        return made_straight
+        return [5, made_straight[0][0]]
 
-    return made_straight
+    return [0]
 
 
 def find_trips(board, hand):
@@ -542,17 +558,42 @@ def find_trips(board, hand):
     return trips_cards
 
 
-def best_hand(board, hand):
-    '''Returns the best two cards to play'''
-    if len(find_straight_flushes(board, hand)) > 0:
-        return find_straight_flushes(board, hand)
-    elif len(find_quads(board, hand)) > 0:
-        return find_quads(board, hand)
-    elif len(find_flushes(board, hand)) > 0:
-        return find_flushes(board, hand)
-    elif len(find_straights(board, hand)) > 0:
-        return find_straights(board, hand)
+def find_smaller_hands(board, hand):
+    board_triplets = get_subsets(board, 3)
+    hand_pairs = get_subsets(hand, 2)
+    highest_code = [0]
+    for i in board_triplets:
+        for j in hand_pairs:
+            five_card = i + j
+            five_card_ranks = get_ranks(five_card)
+            sorted = list(reversed(numpy.unique(five_card_ranks)))
+            if len(poker.check_for_trips(five_card)) > 1:
+                this_code = poker.check_for_trips(five_card)
+            elif len(poker.check_for_two_pair(five_card)) > 1:
+                this_code = poker.check_for_two_pair(five_card)
+            elif len(poker.check_for_pair(five_card)) > 1:
+                this_code = poker.check_for_pair(five_card)
+            else:
+                this_code = [1, sorted[0]]
+            if poker.compare_codes(highest_code, this_code) < 0:
+                highest_code = this_code
 
+    return poker.hand_to_string(highest_code)
+
+
+def best_hand(board, hand):
+    if len(find_straight_flushes(board, hand)) > 1:
+        return poker.hand_to_string(find_straight_flushes(board, hand))
+    elif len(find_quads(board, hand)) > 1:
+        return poker.hand_to_string(find_quads(board, hand))
+    elif len(find_boats(board, hand)) > 1:
+        return poker.hand_to_string(find_boats(board, hand))
+    elif len(find_flushes(board, hand)) > 1:
+        return poker.hand_to_string(find_flushes(board, hand))
+    elif len(find_straights(board, hand)) > 1:
+        return poker.hand_to_string(find_straights(board, hand))
+    else:
+        return find_smaller_hands(board, hand)
 
 def test_run(n):
     for i in range(0, n):
@@ -562,26 +603,37 @@ def test_run(n):
         aDeck.shuffle_deck()
         deal_cards(aDeck, 5, boardCards)
         deal_cards(aDeck, 4, playerCards)
-        results = list(find_boats(boardCards, playerCards))
-        if len(results) >= 1:
-            print_cards(boardCards)
-            print_cards(playerCards)
-            print_cards(results)
-            print("////////////")
+        print_cards(boardCards)
+        print_cards(playerCards)
+        print(best_hand(boardCards, playerCards))
+        print("////////////")
 
 
 '''Use test_run to deal out n random boards and hands. As of right now, the different methods have
 slightly different return types, so you may have to tweak the parameter you give to print_cards()'''
-test_run(10000)
+test_run(1)
+
+'''boardCards = []
+aDeck = Deck()
+aDeck.shuffle_deck()
+deal_cards(aDeck, 5, boardCards)
+results = get_subsets(boardCards, 3)
+for i in results:
+    print_cards(i)'''
+
 
 '''Use the code below to debug a specific situation'''
 '''
-boardCards = [Card(13, 4), Card(8, 2), Card(8, 1), Card(6, 2), Card(13, 2)]
-playerCards = [Card(5, 3), Card(7, 2), Card(6, 1), Card(6, 4)]
+boardCards = [Card(12, 4), Card(6, 4), Card(11, 4), Card(10, 2), Card(13, 2)]
+playerCards = [Card(14, 3), Card(5, 2), Card(8, 4), Card(10, 4)]
 print_cards(boardCards)
 print_cards(playerCards)
-results = find_boats(boardCards, playerCards)
-print_cards(results)
+results = best_hand(boardCards, playerCards)
+print(results)
+
+4c Ah 5h 8c 2s 
+4s 3d Ad Jc 
+Two pair, Aces and Fours
 '''
 
 
